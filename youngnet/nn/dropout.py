@@ -10,8 +10,12 @@ class Dropout(Module):
     
     def forward(self, x: np.ndarray):
         if self.train:
-            return x * np.random.binomial(1, 1 - self.p, x.shape[-1])
+            self.output = np.random.binomial(1, 1 - self.p, x.shape[-1])     #利用output来存储mask
+            return x * self.output
         return x * (1 - self.p)
+    
+    def backpropagation(self, grad: np.ndarray):
+        return grad * self.output
     
     def __repr__(self):
         return f"{self.__class__.__name__}(p={self.p})"
