@@ -21,13 +21,32 @@ def linear_backward(weight: np.ndarray, input: np.ndarray, grad: np.ndarray):
     db = np.sum(grad, axis=0)
     return {"weight": dw / N, "bias": db / N, "cur_grad": dz}
 
+#
+# def sigmoid(x: np.ndarray):
+#     return 1 / (1 + np.exp(-x))
+
 
 def sigmoid(x: np.ndarray):
-    return 1 / (1 + np.exp(-x))
+    # 避免溢出
+    sigmoid_result = np.zeros(x.shape)
+    sigmoid_result[x > 0] = 1 / (1 + np.exp(-x[x > 0]))
+    sigmoid_result[x <= 0] = 1 - 1 / (1 + np.exp(x[x <= 0]))
+    return sigmoid_result
 
 
 def sigmoid_backward(output: np.ndarray, grad: np.ndarray):
     return output * (1 - output) * grad
+
+
+def tanh(x: np.ndarray):
+    result = np.zeros(x.shape)
+    result[x < 0] = (np.exp(2 * x[x < 0]) - 1) / (np.exp(2 * x[x < 0]) + 1)
+    result[x > 0] = np.tanh(x[x > 0])
+    return result
+
+
+def tanh_backward(output: np.ndarray, grad: np.ndarray):
+    return grad * (1 - np.square(output))
 
 
 def relu(x: np.ndarray):

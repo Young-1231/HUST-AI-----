@@ -1,6 +1,18 @@
 import numpy as np
 from numpy.random import permutation
 
+
+def onehot(x: np.ndarray, num_classes):
+    return np.eye(num_classes)[x]
+
+
+def classify_accuracy(y_pred, y_true):
+    assert y_pred.any() != np.nan
+    N = float(y_true.shape[0])
+    y_true = np.argmax(y_true, axis=1)
+    return np.sum(y_true == np.argmax(y_pred, axis=1)) / N
+
+
 class Dataset:
     def __init__(self) -> None:
         pass
@@ -112,8 +124,6 @@ def data_loader(X, y, batch_size: int, shuffle: bool = False) -> list:
             return len(self.data)
 
     return DataLoader(TrainSet(X, y), batch_size, shuffle)
-
-
 
 # 处理反向传播时ndim不匹配的函数
 def process_grad(add_grad: np.ndarray, node: np.ndarray):
