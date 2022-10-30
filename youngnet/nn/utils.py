@@ -2,6 +2,18 @@ import numpy as np
 from numpy.random import permutation
 
 
+
+def train_test_split(x, y, test_size):
+    permut_index = np.random.permutation(x.shape[0])
+    test_index = permut_index[:test_size]
+    train_index = permut_index[test_size:]
+    test_x = x[test_index]
+    test_y = y[test_index]
+    train_x = x[train_index]
+    train_y = y[train_index]
+    return train_x, test_x, train_y, test_y
+
+
 def onehot(x: np.ndarray, num_classes):
     return np.eye(num_classes)[x]
 
