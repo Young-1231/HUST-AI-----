@@ -31,6 +31,21 @@ class SGD(Optimizer):
             self.nodes[key] -= self.v[key]
 
 
+class Adagrad(Optimizer):
+    def __init__(self, nodes: Dict, grads: Dict, lr: float = 1e-3, weight_decay: float = 0., eps: float=1e-10):
+        super().__init__(nodes, grads)
+        self.lr = lr
+        self.weight_decay = weight_decay
+        self.eps = eps
+        self.G = {key: np.zeros_like(value) for key, value in self.nodes.items()}
+    
+    def step(self):
+        for key in self.nodes.keys():
+            grad = self.grads[key] + self.weight_decay * self.nodes[key]
+            self.G[key] += grad**2
+            self.nodes[key] -= self.lr * grad / (self.eps + self.G[key])**0.5
+
+
 class Adam(Optimizer):
     def __init__(self, nodes: Dict, grads: Dict, lr: float = 1e-3, betas: Tuple[float] = (0.9, 0.999), eps: float = 1e-8, weight_decay: float = 0):
         super().__init__(nodes, grads)
@@ -51,3 +66,4 @@ class Adam(Optimizer):
             v_t = self.v[key] / (1 - self.beta2 ** self.t)
             self.nodes[key] -= self.lr * m_t / (v_t ** 0.5 + self.eps)
         self.t += 1
+
