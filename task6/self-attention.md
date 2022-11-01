@@ -15,12 +15,6 @@ X W^Q = Q \\ XW^K = K \\ XW^V = V
 \end{aligned}    
 $$
 借助self attention,只需要对原始输入进行一些矩阵乘法便能得到最终包含有不同注意力信息的向量。
-### 位置编码
-
-#### Token Embedding
-
-#### Positional Embedding
-
 
 ## encoder-decoder机制理解和代码实现
 
