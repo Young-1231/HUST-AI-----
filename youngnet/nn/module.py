@@ -2,7 +2,11 @@ import numpy as np
 from collections import OrderedDict
 from typing import List
 
+
 class Grad:
+    """
+    被利用来记录模型的梯度
+    """
     def __init__(self, data: np.ndarray):
         self.data = data
     
@@ -11,6 +15,9 @@ class Grad:
 
 
 class Parameter:
+    """
+    被利用来记录模型的参数
+    """
     def __init__(self, data: np.ndarray):
         self.data = data
         

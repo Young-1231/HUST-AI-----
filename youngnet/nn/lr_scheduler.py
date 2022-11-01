@@ -20,6 +20,9 @@ class Scheduler:
 
 
 class StepLR(Scheduler):
+    """
+    按固定步长衰减的学习率调整策略
+    """
     def __init__(self, optimizer: Optimizer, step_size: int, gamma=0.1):
         self.step_size = step_size
         self.gamma = gamma
