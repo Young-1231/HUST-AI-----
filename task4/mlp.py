@@ -2,8 +2,6 @@ import sys
 sys.path.append("..")
 import numpy as np
 from sklearn.datasets import load_digits
-from sklearn.model_selection import  KFold
-from sklearn.preprocessing import StandardScaler
 
 import matplotlib.pyplot as plt 
 
@@ -20,11 +18,7 @@ train_X, test_X, train_y, test_y = train_test_split(
     y,
     test_size=len(X) // 7
 )
-# train_X, test_X = standardization(train_X, test_X)
-
-stder = StandardScaler()
-train_X = stder.fit_transform(train_X)
-test_X = stder.transform(test_X)
+train_X, test_X = standardization(train_X, test_X)
 
 n_input = train_X.shape[1]
 n_hiddens = [100, 50]
@@ -74,9 +68,11 @@ class Net(nn.Module):
         grad = self.fc1.backpropagation(grad)
 
 
-net = Net(n_input, n_hiddens, n_output, p_dropout=0.5)
+net = Net(n_input, n_hiddens, n_output)
 nodes, grads = net.parameters()
-optimizer = nn.SGD(nodes, grads, lr=0.1, weight_decay=0.001)
+#optimizer = nn.SGD(nodes, grads, lr=0.1, weight_decay=0.001)
+#optimizer = nn.Adagrad(nodes, grads, lr=0.1)
+optimizer = nn.Adam(nodes, grads, lr=0.1)
 
 loss = nn.CrossEntropyLoss()
 
@@ -122,7 +118,7 @@ def visualize(train_acc_list, test_acc_list,loss_list):
     plt.plot(test_acc_list, label="Test Accuracy")
     plt.legend()
     
-    plt.savefig("./img/mlp_tanh_dropout.png")
+    plt.savefig("./img/mlp_tanh_adam.png")
     plt.show()
 
 

@@ -3,8 +3,6 @@ import sys
 sys.path.append("..")
 import numpy as np
 from sklearn.datasets import load_digits
-from sklearn.model_selection import  KFold
-from sklearn.preprocessing import StandardScaler
 
 import matplotlib.pyplot as plt
 
@@ -20,11 +18,8 @@ train_X, test_X, train_y, test_y = train_test_split(
     y,
     test_size=len(X) // 7
 )
-# train_X, test_X = standardization(train_X, test_X)
 
-stder = StandardScaler()
-train_X = stder.fit_transform(train_X)
-test_X = stder.transform(test_X)
+train_X, test_X = standardization(train_X, test_X)
 
 n_input = train_X.shape[1]
 n_hiddens = [100, 50]
