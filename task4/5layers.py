@@ -2,8 +2,6 @@ import sys
 sys.path.append("..")
 import numpy as np
 from sklearn.datasets import load_digits
-from sklearn.model_selection import KFold
-from sklearn.preprocessing import StandardScaler
 
 import matplotlib.pyplot as plt 
 
@@ -21,9 +19,8 @@ train_X, test_X, train_y, test_y = train_test_split(
     test_size=len(X) // 7
 )
 
-stder = StandardScaler()
-train_X = stder.fit_transform(train_X)
-test_X = stder.transform(test_X)
+
+train_X, test_X = standardization(train_X, test_X)
 
 n_input = train_X.shape[1]
 n_hiddens = [60, 100, 60, 30]
@@ -32,6 +29,7 @@ n_output = 10
 class Net(nn.Module):
     def __init__(self, n_input, n_hiddens, n_output, p_dropout=None):
         super().__init__()
+        self.p_dropout = p_dropout
         self.fc1 = nn.Linear(n_input, n_hiddens[0])
         self.tanh1 = nn.Tanh()
         self.fc2 = nn.Linear(n_hiddens[0], n_hiddens[1])
@@ -40,6 +38,8 @@ class Net(nn.Module):
         self.tanh3 = nn.Tanh()
         self.fc4 = nn.Linear(n_hiddens[2], n_hiddens[3])
         self.tanh4 = nn.Tanh()
+        if p_dropout is not None:
+            self.dropout = nn.Dropout(p_dropout)
         self.fc5 = nn.Linear(n_hiddens[3], n_output)
     
     
@@ -52,11 +52,15 @@ class Net(nn.Module):
         x = self.tanh3(x)
         x = self.fc4(x)
         x = self.tanh4(x)
+        if self.p_dropout is not None:
+            x = self.dropout(x)
         x = self.fc5(x)
         return x
     
     def backpropagation(self, grad: np.ndarray):
         grad = self.fc5.backpropagation(grad)
+        if self.p_dropout is not None:
+            grad = self.dropout.backpropagation(grad)
         grad = self.tanh4.backpropagation(grad)
         grad = self.fc4.backpropagation(grad)
         grad = self.tanh3.backpropagation(grad)
@@ -68,7 +72,7 @@ class Net(nn.Module):
     
 
 
-net = Net(n_input, n_hiddens, n_output)
+net = Net(n_input, n_hiddens, n_output, p_dropout=0.5)
 nodes, grads = net.parameters()
 optimizer = nn.SGD(nodes, grads, lr=0.1)
 
@@ -105,7 +109,7 @@ for epoch in range(num_epochs):
         print(f"epoch {epoch+1:3d}, train loss {loss_list[-1]:.6f}, train acc {train_acc[-1]:.4f}, test acc {test_acc[-1]:.4f}")
 
 
-def visualize(train_acc_list, test_acc_list,loss_list):
+def visualize(train_acc_list, test_acc_list, loss_list):
     plt.figure(figsize=(10, 5))
     plt.subplot(1, 2, 1)
     plt.plot(loss_list, label="training loss")
@@ -116,7 +120,7 @@ def visualize(train_acc_list, test_acc_list,loss_list):
     plt.plot(test_acc_list, label="Test Accuracy")
     plt.legend()
     
-    plt.savefig("./img/mlp_tanh_5layer.png")
+    plt.savefig("./img/mlp_tanh_5layer_dropout.png")
     plt.show()
 
 
