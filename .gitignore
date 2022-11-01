@@ -1,5 +1,3 @@
 .vscode
-.youngnet/__pycache__
-.youngnet/nn/__pycache__
-task1\img
-task2\img
+*.png
+*.pyc
