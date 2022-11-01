@@ -26,7 +26,7 @@ def softmax(x: np.ndarray, axis=None, keepdims=True):
     """
     Softmax function
     """
-    x_sub_max = x - x.max()
+    x_sub_max = x - x.max()     # 数值稳定性
     exp_x = np.exp(x_sub_max)
     sum_exp_x  = np.sum(exp_x, axis=axis, keepdims=keepdims)
     return exp_x / sum_exp_x
